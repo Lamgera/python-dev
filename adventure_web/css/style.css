@@ -1,0 +1,9 @@
+
+        body { font-family: sans-serif; background: #1a1a1a; color: #ccc; display: flex; justify-content: center; padding: 20px; }
+        .card { max-width: 600px; width: 100%; background: #252525; padding: 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .room-img { width: 100%; border-radius: 5px; margin-bottom: 15px; border: 1px solid #444; }
+        .btn { display: block; padding: 12px; margin: 10px 0; background: #4a90e2; color: white; text-decoration: none; border-radius: 5px; text-align: center; }
+        .btn:hover { background: #357abd; }
+        .status { padding: 15px; border-radius: 5px; text-align: center; font-weight: bold; }
+        .win { background: #2d5a27; } .dead { background: #5a2727; }
+        
