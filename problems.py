@@ -1,44 +1,48 @@
 # Блок 2
 
-# 5.6. (уровень сложности: средний)
+# 5.7. (уровень сложности: высокий)
 
-# Реализуйте простую систему проверки орфографии с помощью функции вычисления
-# расстояния Левенштейна. Для работы потребуется словарь русских слов с указанием
-# частот встречаемости.
+# Доработайте систему проверки орфографии с помощью модифицированной функции
+# расстояния Левенштейна, в которой учитываются:
+# Замены сходных по написанию английских букв на русские.
+# Перестановки пар соседних символов.
 
 
-DICT = {
-    'по-моему': 100, 
-    'я': 500, 
-    'написал': 80, 
-    'всё': 150, 
-    'правильно': 90
-}
-
-def get_lev_dist(s1, s2):
+def improved_lev_dist(s1, s2):
+    SIMILAR = {'a':'а', 'e':'е', 'o':'о', 'p':'р', 'c':'с', 'x':'х', 'y':'у'}
+    d = {}
     n, m = len(s1), len(s2)
-    if n < m: 
-        s1, s2 = s2, s1
-    prev = list(range(len(s2) + 1))
-    for i, c1 in enumerate(s1):
-        curr = [i + 1]
-        for j, c2 in enumerate(s2):
-            curr.append(min(prev[j+1]+1, curr[j]+1, prev[j]+(c1!=c2)))
-        prev = curr
-    return prev[-1]
+    for i in range(-1, n + 1): d[i, -1] = i + 1
+    for j in range(-1, m + 1): d[-1, j] = j + 1
+    for i in range(n):
+        for j in range(m):
+            if s1[i] == s2[j] or SIMILAR.get(s1[i]) == s2[j] or SIMILAR.get(s2[j]) == s1[i]:
+                cost = 0
+            else:
+                cost = 1
+            
+            d[i, j] = min(
+                d[i-1, j] + 1,
+                d[i, j-1] + 1,
+                d[i-1, j-1] + cost
+            )
+            if i > 0 and j > 0 and s1[i] == s2[j-1] and s1[i-1] == s2[j]:
+                d[i, j] = min(d[i, j], d[i-2, j-2] + 1)
 
-def spell_word(word, dictionary):
-    if word in dictionary: 
-        return word
-    for dist in [1, 2]:
-        candidates = [w for w in dictionary if get_lev_dist(word, w) == dist]
-        if candidates:
-            return max(candidates, key=lambda w: dictionary[w])
-    
-    return word
+    return d[n-1, m-1]
 
-def spell(text):
-    words = text.split()
-    return " ".join(spell_word(w, DICT) for w in words)
+def test_improved_speller():
+    test_cases = [
+        ("мама", "папа", 2, "Две замены (м->п, м->п)"),
+        ("привет", "првиет", 1, "Транспозиция соседних символов (ив->ви)"),
+        ("cлово", "слово", 0, "Визуальная схожесть (англ.'c' vs рус.'с')")
+    ]
 
-print(spell('помоему я напесал усё правильна'))
+    for s1, s2, expected, description in test_cases:
+        result = improved_lev_dist(s1, s2)
+        status = "Пройден" if result == expected else "ПРОВАЛЕН"
+        print(f"[{status}] {description}")
+        print(f"   {s1} vs {s2} | Ожидалось: {expected}, Получено: {result}")
+        print("-" * 50)
+
+test_improved_speller()
