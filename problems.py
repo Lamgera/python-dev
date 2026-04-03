@@ -10,3 +10,4 @@
 from itertools import groupby
 
 rle_encode = lambda data: [(char, len(list(group))) for char, group in groupby(data)]
+print (rle_encode('AABBBCC'))
