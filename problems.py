@@ -9,5 +9,4 @@
 
 from itertools import groupby
 
-def rle_encode(data: str) -> list[tuple[str, int]]:
-    return [(char, len(list(group))) for char, group in groupby(data)]
+rle_encode = lambda data: [(char, len(list(group))) for char, group in groupby(data)]
